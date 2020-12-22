@@ -36,6 +36,11 @@ class TasksViewModel(
         }
     }
 
+    fun onTaskCompleteChanged(task: Task, completed: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.setTaskCompleted(task, completed)
+        }
+
     private fun postAction(action: Action) {
         (actions as MutableLiveData).postValue(action)
     }

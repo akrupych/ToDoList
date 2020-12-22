@@ -26,6 +26,9 @@ class TasksFragment : Fragment() {
         val binding = FragmentTasksBinding.inflate(inflater, container, false)
         // handle list
         adapter = TasksAdapter(binding.root.context).apply {
+            onTaskCompleteChanged = { task, completed ->
+                viewModel.onTaskCompleteChanged(task, completed)
+            }
             // scroll to top when task is added
             registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {

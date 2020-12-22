@@ -11,4 +11,7 @@ class TasksRepository(
     suspend fun preloadData() = taskDao.insertAll(taskService.getTasks())
 
     suspend fun addTask(task: Task) = taskDao.insert(task)
+
+    suspend fun setTaskCompleted(task: Task, completed: Boolean) =
+        taskDao.update(task.copy(completed = completed))
 }
