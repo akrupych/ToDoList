@@ -16,6 +16,8 @@ class TasksViewModel(
 
     val actions: LiveData<Action> = SingleLiveEvent()
 
+    private var deletedTask: Task? = null
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -41,6 +43,17 @@ class TasksViewModel(
             repository.setTaskCompleted(task, completed)
         }
 
+    fun onTaskSwiped(task: Task) = viewModelScope.launch(Dispatchers.IO) {
+        repository.delete(task)
+        deletedTask = task
+        postAction(Action.ShowUndoSnackbar)
+    }
+
+    fun onUndoTaskDeletion() = viewModelScope.launch(Dispatchers.IO) {
+        deletedTask?.let { repository.addTask(it) }
+        deletedTask = null
+    }
+
     private fun postAction(action: Action) {
         (actions as MutableLiveData).postValue(action)
     }
@@ -50,5 +63,6 @@ class TasksViewModel(
         data class ShowErrorSnackbar(val message: String) : Action()
         object ClearInputField : Action()
         object ShowTitleBlankError : Action()
+        object ShowUndoSnackbar : Action()
     }
 }

@@ -3,4 +3,6 @@
     <string name="inputHint">Type your task</string>
     <string name="addButton">Add</string>
     <string name="taskTitleBlankError">Can\'t be blank</string>
+    <string name="taskDeleted">Task deleted</string>
+    <string name="undoButton">Undo</string>
 </resources>

@@ -14,4 +14,6 @@ class TasksRepository(
 
     suspend fun setTaskCompleted(task: Task, completed: Boolean) =
         taskDao.update(task.copy(completed = completed))
+
+    suspend fun delete(task: Task) = taskDao.delete(task)
 }

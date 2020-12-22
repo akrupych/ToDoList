@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.databinding.FragmentTasksBinding
@@ -17,6 +18,24 @@ class TasksFragment : Fragment() {
     private val viewModel: TasksViewModel by viewModel()
 
     private lateinit var adapter: TasksAdapter
+
+    private val swipeToDelete = ItemTouchHelper(
+        object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.START or ItemTouchHelper.END
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val task = adapter.currentList[viewHolder.adapterPosition]
+                viewModel.onTaskSwiped(task)
+            }
+        }
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +57,7 @@ class TasksFragment : Fragment() {
             })
         }
         binding.tasksRecyclerView.adapter = adapter
+        swipeToDelete.attachToRecyclerView(binding.tasksRecyclerView)
         viewModel.tasks.observe(viewLifecycleOwner) { adapter.submitList(it) }
         // handle actions
         viewModel.actions.observe(viewLifecycleOwner) {
@@ -50,6 +70,10 @@ class TasksFragment : Fragment() {
                     binding.inputEditText.text.clear()
                 is TasksViewModel.Action.ShowTitleBlankError ->
                     binding.inputEditText.error = getString(R.string.taskTitleBlankError)
+                is TasksViewModel.Action.ShowUndoSnackbar ->
+                    Snackbar.make(binding.root, R.string.taskDeleted, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undoButton) { viewModel.onUndoTaskDeletion() }
+                        .show()
             }
         }
         // handle add task

@@ -17,4 +17,7 @@ interface TasksDao {
 
     @Update
     suspend fun update(task: Task)
+
+    @Delete
+    suspend fun delete(task: Task)
 }
