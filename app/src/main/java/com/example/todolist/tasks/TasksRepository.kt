@@ -9,4 +9,6 @@ class TasksRepository(
     val tasks: LiveData<List<Task>> = taskDao.getTasks()
 
     suspend fun preloadData() = taskDao.insertAll(taskService.getTasks())
+
+    suspend fun addTask(task: Task) = taskDao.insert(task)
 }

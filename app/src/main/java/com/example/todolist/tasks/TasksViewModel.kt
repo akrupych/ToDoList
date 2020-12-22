@@ -27,6 +27,15 @@ class TasksViewModel(
         }
     }
 
+    fun onAddTask(taskTitle: String) = viewModelScope.launch(Dispatchers.IO) {
+        if (taskTitle.isNotBlank()) {
+            repository.addTask(Task(taskTitle))
+            postAction(Action.ClearInputField)
+        } else {
+            postAction(Action.ShowTitleBlankError)
+        }
+    }
+
     private fun postAction(action: Action) {
         (actions as MutableLiveData).postValue(action)
     }
@@ -34,5 +43,7 @@ class TasksViewModel(
     sealed class Action {
         data class ShowLoading(val loading: Boolean) : Action()
         data class ShowErrorSnackbar(val message: String) : Action()
+        object ClearInputField : Action()
+        object ShowTitleBlankError : Action()
     }
 }
