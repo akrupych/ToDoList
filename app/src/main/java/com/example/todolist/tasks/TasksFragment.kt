@@ -15,15 +15,19 @@ class TasksFragment : Fragment() {
 
     private val viewModel: TasksViewModel by viewModel()
 
+    private lateinit var adapter: TasksAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentTasksBinding.inflate(inflater, container, false)
-        viewModel.tasks.observe(viewLifecycleOwner) {
-            Log.d("qwerty", it.joinToString())
-        }
+        // handle list
+        adapter = TasksAdapter(binding.root.context)
+        binding.tasksRecyclerView.adapter = adapter
+        viewModel.tasks.observe(viewLifecycleOwner) { adapter.submitList(it) }
+        // handle actions
         viewModel.actions.observe(viewLifecycleOwner) {
             when (it) {
                 is TasksViewModel.Action.ShowLoading ->
