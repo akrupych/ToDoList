@@ -1,6 +1,8 @@
 package com.example.todolist.tasks
 
 import androidx.room.Room
+import com.example.todolist.utils.DispatcherProvider
+import com.example.todolist.utils.DefaultDispatcherProvider
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -10,7 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val taskModule = module {
-    viewModel { TasksViewModel(get()) }
+    viewModel { TasksViewModel(get(), get()) }
     factory { TasksRepository(get(), get<TasksDatabase>().taskDao()) }
     single {
         Retrofit.Builder()
@@ -32,4 +34,5 @@ val taskModule = module {
             TasksDatabase::class.java.simpleName
         ).build()
     }
+    single<DispatcherProvider> { DefaultDispatcherProvider }
 }
